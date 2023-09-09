@@ -1,0 +1,8 @@
+uncertainties
+progressbar
+numpy
+scipy
+gtts
+pytz
+termcolor
+h5py
