@@ -169,13 +169,15 @@ def make_col_str(col):
     return '{0:2d}'.format(int(col)) if int(col) > 1 else '{0:3.1f}'.format(col)
 
 
-def print_banner(msg, symbol='~', new_lines=1, color=None):
-    msg = '{} |'.format(msg)
-    print(colored('{n}{delim}\n{msg}\n{delim}{n}'.format(delim=len(str(msg)) * symbol, msg=msg, n='\n' * new_lines), color))
+def print_banner(msg, symbol='~', new_lines=1, color=None, prnt=True):
+    if prnt:
+        msg = '{} |'.format(msg)
+        print(colored('{n}{delim}\n{msg}\n{delim}{n}'.format(delim=len(str(msg)) * symbol, msg=msg, n='\n' * new_lines), color))
 
 
-def print_small_banner(msg, symbol='-', color=None):
-    print(colored('\n{delim}\n{msg}\n'.format(delim=len(str(msg)) * symbol, msg=msg), color))
+def print_small_banner(msg, symbol='-', color=None, prnt=True):
+    if prnt:
+        print(colored('\n{delim}\n{msg}\n'.format(delim=len(str(msg)) * symbol, msg=msg), color))
 
 
 def print_elapsed_time(start, what='This', show=True, color=None):
