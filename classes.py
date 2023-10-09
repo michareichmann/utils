@@ -130,6 +130,10 @@ class Config(ConfigParser):
     def get_ufloat(self, section, option=None, default=None):
         return ufloat_fromstr(self.get_value(section, option, default=default))
 
+    def set_value(self, value, section, option=None):
+        s, o = (self.Section, section) if option is None else (section, option)
+        self.set(s, o, value)
+
     def show(self):
         for key, section in self.items():
             print(colored(f'[{key}]', 'yellow'))
