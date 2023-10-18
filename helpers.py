@@ -285,17 +285,18 @@ def pol2cart(rho, phi):
     return np.array([rho * np.cos(phi), rho * np.sin(phi)])
 
 
-def print_table(rows, header=None, footer=None, prnt=True):
+def print_table(rows, header=None, footer=None, form=None, prnt=True):
     head, foot = [choose([v], np.zeros((0, len(rows[0]))), v) for v in [header, footer]]
     t = np.concatenate([head, rows, foot]).astype('str')
     col_width = [len(max(t[:, i], key=len)) for i in range(t.shape[1])]
     total_width = sum(col_width) + len(col_width) * 3 + 1
     hline = '{}'.format('~' * total_width)
     lines = []
+    form = 'l' * t.shape[1] if form is None else form
     for i, row in enumerate(t):
         if i in [0] + choose([1], [], header) + choose([t.shape[0] - 1], [], footer):
             lines.append(hline)
-        lines.append('| {r} |'.format(r=' | '.join(word.ljust(n) for word, n in zip(row, col_width))))
+        lines.append('| {r} |'.format(r=' | '.join(word.ljust(n) if form[j] == 'l' else word.rjust(n) for j, (word, n) in enumerate(zip(row, col_width)))))
     lines.append('{}\n'.format(hline))
     if prnt:
         print('\n'.join(lines))
