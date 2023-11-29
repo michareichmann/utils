@@ -288,6 +288,7 @@ def pol2cart(rho, phi):
 def print_table(rows, header=None, footer=None, form=None, prnt=True):
     head, foot = [choose([v], np.zeros((0, len(rows[0]))), v) for v in [header, footer]]
     t = np.concatenate([head, rows, foot]).astype('str')
+    print(t)
     col_width = [len(max(t[:, i], key=len)) for i in range(t.shape[1])]
     total_width = sum(col_width) + len(col_width) * 3 + 1
     hline = '{}'.format('~' * total_width)
