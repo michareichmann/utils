@@ -14,7 +14,7 @@ from time import time, sleep
 
 from gtts import gTTS
 import numpy as np
-from os import makedirs, remove, devnull, stat, getenv, _exit
+from os import makedirs, remove, devnull, stat, getenv, _exit  # noqa
 from os import path as pth
 from pytz import timezone, utc
 from termcolor import colored
@@ -93,16 +93,6 @@ def round_down_to(num, val=1):
 def round_up_to(num, val=1):
     return int(num) // val * val + val
 
-
-def interpolate_two_points(x1, y1, x2, y2, name=''):
-    # f = p1*x + p0
-    p1 = (y1 - y2) / (x1 - x2)
-    p0 = y1 - x1 * p1
-    w = abs(x2 - x1)
-    fit_range = np.array(sorted([x1, x2])) + [-w / 3., w / 3.]
-    f = TF1('fpol1{}'.format(name), 'pol1', *fit_range)
-    f.SetParameters(p0, p1)
-    return f
 
 
 def get_x(x1, x2, y1, y2, y):
@@ -336,7 +326,7 @@ def do_hdf5(path, func, redo=False, *args, **kwargs):
 
 def int2roman(integer):
     """ Convert an integer to Roman numerals. """
-    if type(integer) != int:
+    if type(integer) is not int:
         raise TypeError(f'cannot convert {type(integer).__name__} to roman, integer required')
     if not 0 < integer < 4000:
         raise ValueError('Argument must be between 1 and 3999')
@@ -400,12 +390,18 @@ def time_stamp(dt, off=None):
     return t if off is None else t - (off if off > 1 else dt.utcoffset().seconds)
 
 
-def say(txt, lang='en'):
+def txt2speech(txt: str, path: Path, lang='en'):
     tts = gTTS(text=txt, lang=lang)
-    tts.save('good.mp3')
-    with open(devnull, 'w') as FNULL:
-        call(([] if getenv('SSH_TTY') is None else ['DISPLAY=:0']) + ['mpg321', 'good.mp3'], stdout=FNULL)
-    remove('good.mp3')
+    tts.save(str(path))
+
+
+def say(path: Path, txt='', lang='en', rm=False):
+    if not path.exists():
+        txt2speech(txt, path, lang)
+    no_display = '' if getenv('SSH_TTY') is None else 'DISPLAY=:0 '  # required when connecting via ssh
+    call(f'{no_display}mpg321 -q {path}', shell=True)
+    if rm:
+        remove(path)
 
 
 def get_running_time(t):
