@@ -615,3 +615,9 @@ def alternate(l0, l1):
 def do_nothing():
     pass
 
+
+def do(fs, pars, exe=-1):
+    fs, pars = ([fs], [pars]) if type(fs) is not list else (fs, pars)  # noqa
+    exe = pars if exe == -1 else [exe]
+    for f, p, e in zip(fs, pars, exe):
+        f(p) if e is not None else do_nothing()
