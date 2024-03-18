@@ -1,9 +1,11 @@
-from .helpers import choose, do_nothing, time_stamp, timedelta, datetime, Path, colored, critical, load_json
 import json
-from functools import wraps
-from uncertainties import ufloat_fromstr
-from progressbar import Bar, ETA, FileTransferSpeed, Percentage, ProgressBar, SimpleProgress, Widget
 from configparser import ConfigParser, NoSectionError, NoOptionError
+from functools import wraps
+
+from progressbar import Bar, ETA, FileTransferSpeed, Percentage, ProgressBar, SimpleProgress, Widget
+from uncertainties import ufloat_fromstr
+
+from .helpers import choose, do_nothing, time_stamp, timedelta, datetime, Path, colored, critical, load_json, np
 
 
 def update_pbar(func):
@@ -143,6 +145,26 @@ class Config(ConfigParser):
         with open(choose(file_name, self.FilePath), 'w') as f:
             super(Config, self).write(f, space_around_delimiters)
 
+
+class NumStr(int):
+
+    D = {'': 1, 'K': 1e3, 'M': 1e6, 'G': 1e6}
+
+    def __new__(cls, s: str | int):
+        x = None
+        if type(s) is str:
+            m = s[-1].upper() if s[-1].upper() in cls.D.keys() else ''
+            x = super(NumStr, cls).__new__(cls, int(float(s[:-1] if len(m) > 0 else s) * cls.D[m]))
+            x.StringMultiplier = m
+            x.String = s
+        elif type(s) is int:
+            x = super(NumStr, cls).__new__(cls, s)
+            x.StringMultiplier = list(cls.D.keys())[int(np.log10(s) // 3)]
+            x.String = f'{s / cls.D[x.StringMultiplier]:.1f}{x.StringMultiplier}'
+        return x
+
+    def __str__(self):
+        return self.String
 
 
 PBAR = PBar()
