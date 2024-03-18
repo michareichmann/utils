@@ -159,7 +159,7 @@ class NumStr(int):
             x.String = s
         elif type(s) is int:
             x = super(NumStr, cls).__new__(cls, s)
-            x.StringMultiplier = list(cls.D.keys())[int(np.log10(s) // 3)]
+            x.StringMultiplier = '' if s == 0 else list(cls.D.keys())[int(np.log10(s) // 3)]
             x.String = f'{s / cls.D[x.StringMultiplier]:.1f}{x.StringMultiplier}'
         return x
 
