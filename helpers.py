@@ -340,8 +340,8 @@ def int2roman(integer):
     return result
 
 
-def remove_letters(s):
-    return ''.join(filter(str.isdigit, s))
+def remove_letters(s: str):
+    return ''.join(filter(str.isdigit, s))  # noqa
 
 
 def remove_digits(string):
@@ -395,13 +395,17 @@ def txt2speech(txt: str, path: Path, lang='en'):
     tts.save(str(path))
 
 
-def say(path: Path, txt='', lang='en', rm=False):
+def say(path: Path, txt='', lang='en', rm=False, volume=100):
     if not path.exists():
         txt2speech(txt, path, lang)
-    no_display = '' if getenv('SSH_TTY') is None else 'DISPLAY=:0 '  # required when connecting via ssh
-    call(f'{no_display}mpg321 -q {path}', shell=True)
+        play(path, volume)
     if rm:
         remove(path)
+
+
+def play(path: Path, volume=100):
+    no_display = '' if getenv('SSH_TTY') is None else 'DISPLAY=:0 '  # required when connecting via ssh
+    call(f'{no_display}mpg321 -q {path} -g {volume}', shell=True)
 
 
 def get_running_time(t):
@@ -621,3 +625,8 @@ def do(fs, pars, exe=-1):
     exe = pars if exe == -1 else [exe]
     for f, p, e in zip(fs, pars, exe):
         f(p) if e is not None else do_nothing()
+
+
+def write_log(txt: str, name='crash'):
+    with open(Dir.joinpath('logs', f'{name}-{datetime.now().strftime("%y-%m-%d_%H-%M-%S")}.log'), 'w') as log:
+        log.write(txt)
