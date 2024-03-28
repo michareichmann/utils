@@ -157,7 +157,8 @@ class NumStr(int):
             x = super(NumStr, cls).__new__(cls, int(float(s[:-1] if len(m) > 0 else s) * cls.D[m]))
             x.StringMultiplier = m
             x.String = s
-        elif type(s) is int:
+        elif type(s) in [int, float]:
+            s = round(s)
             x = super(NumStr, cls).__new__(cls, s)
             x.StringMultiplier = '' if s == 0 else list(cls.D.keys())[int(np.log10(s) // 3)]
             x.String = str(s) if x < 1e3 else f'{s / cls.D[x.StringMultiplier]:.1f}{x.StringMultiplier}'
