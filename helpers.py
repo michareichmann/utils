@@ -293,21 +293,21 @@ def print_table(rows, header=None, footer=None, form=None, prnt=True):
     return '\n'.join(lines)
 
 
-def do_pickle(path, func, value=None, redo=False, *args, **kwargs):
+def do_pickle(path, f=lambda: None, value=None, redo=False, *args, **kwargs):
     path = Path(path)
     if value is not None:
-        with open(path, 'wb') as f:
-            pickle.dump(value, f)
+        with open(path, 'wb') as tf:
+            pickle.dump(value, tf)
         return value
     try:
         if path.exists() and not redo:
-            with open(path, 'rb') as f:
-                return pickle.load(f)
+            with open(path, 'rb') as tf:
+                return pickle.load(tf)
     except ImportError:
         pass
-    ret_val = func(redo=redo, *args, **kwargs) if type(func) in [MethodType, FunctionType] and 'redo' in signature(func).parameters else func(*args, **kwargs)
-    with open(path, 'wb') as f:
-        pickle.dump(ret_val, f)
+    ret_val = f(redo=redo, *args, **kwargs) if type(f) in [MethodType, FunctionType] and 'redo' in signature(f).parameters else f(*args, **kwargs)  # noqa
+    with open(path, 'wb') as tf:
+        pickle.dump(ret_val, tf)
     return ret_val
 
 
