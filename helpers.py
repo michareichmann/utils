@@ -405,7 +405,7 @@ def say(path: Path, txt='', lang='en', rm=False, volume=100):
 
 def play(path: Path, volume=100):
     no_display = '' if getenv('SSH_TTY') is None else 'DISPLAY=:0 '  # required when connecting via ssh
-    call(f'{no_display}mpg321 -q {path} -g {volume}', shell=True)
+    call(f'{no_display}mpg321 -q {path.with_suffix(".mp3")} -g {volume}', shell=True)
 
 
 def get_running_time(t):
